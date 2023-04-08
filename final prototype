@@ -1,0 +1,288 @@
+%% 
+% *Webcam* 
+
+% Connect to selected webcam
+cam = webcam("HP Deluxe Webcam KQ246AA",...
+	"Resolution","640x480",...
+	"Brightness",-2,...
+	"Contrast",32,...
+	"Saturation",65,...
+	"Hue",0,...
+	"Gamma",100,...
+	"Sharpness",32,...
+	"WhiteBalanceMode","auto",...
+	"ExposureMode","auto",...
+	"Gain",0,...
+	"BacklightCompensation",1);
+
+% Acquire webcam image
+money = snapshot(cam);
+
+% Show acquired image
+imshow(money);
+
+% Clear existing webcam connection
+clear cam
+imshow(money)
+%% 
+% *RGB to HSV converter*
+
+hsvimg=rgb2hsv(money);
+hue=hsvimg(:,:,1);
+saturation=hsvimg(:,:,2);
+value=hsvimg(:,:,3);
+%% 
+% *Text to Speech Function* 
+
+%{
+NET.addAssembly('System.Speech');
+speaker=System.Speech.Synthesis.SpeechSynthesizer;
+speaker.Rate=0.1;
+Speak(speaker,'You have scanned an image using your device')
+%}
+%% 
+% *For loop Algorithm with threshold initializations*
+
+BP = 0;
+YP = 0;
+GP = 0;
+PP = 0;
+RP = 0;
+OP = 0;
+
+for i=1:480
+    for j=1:640
+
+        ThMin1k = 0.469;
+        TsMin1k = 0.164;
+        TvMin1k = 0.292;
+
+        ThMax1k = 0.597;
+        TsMax1k = 1.00;
+        TvMax1k = 0.969;
+
+
+
+        ThMin5h = 0.129;
+        TsMin5h = 0.060;
+        TvMin5h = 0.247;
+
+        ThMax5h = 0.203;
+        TsMax5h = 1.00;
+        TvMax5h = 1;
+
+
+
+        ThMin2h = 0.261;
+        TsMin2h = 0.113;
+        TvMin2h = 0.290;
+
+        ThMax2h = 0.382;
+        TsMax2h = 0.667;
+        TvMax2h = 0.941;
+
+
+
+        ThMin1h = 0.750;
+        TsMin1h = 0.105;
+        TvMin1h = 0.246;
+
+        ThMax1h = 0.853;
+        TsMax1h = 0.531;
+        TvMax1h = 0.887;
+
+
+
+        ThMin50 = 0.922;
+        TsMin50 = 0.169;
+        TvMin50 = 0.559;
+
+        ThMax50 = 0.998;
+        TsMax50 = 0.821;
+        TvMax50 = 0.969;
+
+
+
+        ThMin20 = 0.060;
+        TsMin20 = 0.133;
+        TvMin20 = 0.533;
+
+        ThMax20 = 0.119;
+        TsMax20 = 0.692;
+        TvMax20 = 0.985;
+
+        %1k comparator
+        if ((hue(i,j)>=ThMin1k)&(hue(i,j)<=ThMax1k))
+            ch1k = 1;
+            else
+                ch1k = 0;
+        end
+
+        if ((saturation(i,j)>=TsMin1k)&(saturation(i,j)<=TsMax1k))
+            cs1k = 1;
+            else
+                cs1k = 0;
+        end
+
+        if ((value(i,j)>=TvMin1k)&(value(i,j)<=TvMax1k))
+            cv1k = 1;
+            else
+                cv1k = 0;
+        end
+
+        if ((ch1k == 1) & (cs1k == 1) & (cv1k==1))
+            BP = BP + 1;
+        end
+
+        %5H comparator
+        if ((hue(i,j)>=ThMin5h)&(hue(i,j)<=ThMax5h))
+            ch5h = 1;
+            else
+                ch5h = 0;
+        end
+
+        if ((saturation(i,j)>=TsMin5h)&(saturation(i,j)<=TsMax5h))
+            cs5h = 1;
+            else
+                cs5h = 0;
+        end
+
+        if ((value(i,j)>=valThreshMin5h)&(value(i,j)<=TvMax5h))
+            cv5h = 1;
+            else
+                cv5h = 0;
+        end
+
+        if ((ch5h == 1) & (cs5h == 1) & (cv5h==1))
+            YP = YP + 1;
+        end
+
+        %2H comparator
+        if ((hue(i,j)>=ThMin2h)&(hue(i,j)<=ThMax2h))
+            ch2h = 1;
+            else
+                ch2h = 0;
+        end
+
+        if ((saturation(i,j)>=TsMin2h)&(saturation(i,j)<=TsMax2h))
+            cs2h = 1;
+            else
+                cs2h = 0;
+        end
+
+        if ((value(i,j)>=TvMin2h)&(value(i,j)<=TvMax2h))
+            cv2h = 1;
+            else
+                cv2h = 0;
+        end
+
+        if ((ch2h == 1) & (cs2h == 1) & (cv2h==1))
+            GP = GP + 1;
+        end
+        
+        %1H comparator
+        if ((hue(i,j)>=ThMin1h)&(hue(i,j)<=ThMax1h))
+            ch1h = 1;
+            else
+                ch1h = 0;
+        end
+
+        if ((saturation(i,j)>=TsMin1h)&(saturation(i,j)<=TsMax1h))
+            cs1h = 1;
+            else
+                cs1h = 0;
+        end
+
+        if ((value(i,j)>=TvMin1h)&(value(i,j)<=TvMax1h))
+            cv1h = 1;
+            else
+                cv1h = 0;
+        end
+
+        if ((ch1h == 1) & (cs1h == 1) & (cv1h==1))
+            PP = PP + 1;
+        end
+
+        %50 comparator
+        if ((hue(i,j)>=ThMin50)&(hue(i,j)<=ThMax50))
+            ch50 = 1;
+            else
+                ch50 = 0;
+        end
+
+        if ((saturation(i,j)>=TsMin50)&(saturation(i,j)<=TsMax50))
+            cs50 = 1;
+            else
+                cs50 = 0;
+        end
+
+        if ((value(i,j)>=TvMin50)&(value(i,j)<=TvMax50))
+            cv50 = 1;
+            else
+                cv50 = 0;
+        end
+
+        if ((ch50 == 1) & (cs50 == 1) & (cv50 == 1))
+            RP = RP + 1;
+            end
+
+        %20 comparator
+        if ((hue(i,j)>=ThMin20)&(hue(i,j)<=ThMax20))
+            ch20 = 1;
+            else
+                ch20 = 0;
+        end
+
+        if ((saturation(i,j)>=TsMin20)&(saturation(i,j)<=TsMax20))
+            cs20 = 1;
+            else
+                cs20 = 0;
+        end
+
+        if ((value(i,j)>=TvMin20)&(value(i,j)<=TvMax20))
+            cv20 = 1;
+            else
+                cv20 = 0;
+        end
+
+        if ((ch20 == 1) & (cs20 == 1) & (cv20 == 1))
+            OP = OP + 1;
+        end
+
+        j=j+1;
+    end
+    i=i+1;
+end
+
+%% 
+% *OUTPUT*
+
+if ((YP>GP) & (YP>BP) & (YP>PP) & (YP>OP) & (YP>RP))
+    disp('yellow')
+    %Speak(speaker,'The image you have scanned is five hundred philippine pesos')
+end
+
+if ((GP>BP) & (GP>YP) & (GP>PP) & (GP>OP) & (GP>RP))
+    disp('green')
+    %Speak(speaker,'The image you have scanned is two hundred philippine pesos')
+end
+
+if ((RP>GP) & (RP>BP) & (RP>PP) & (RP>OP) & (RP>YP))
+    disp('red')
+    %Speak(speaker,'The image you have scanned is fifty philippine pesos')
+end
+
+if ((PP>GP) & (PP>BP) & (PP>YP) & (PP>OP) & (PP>RP)) 
+    disp('purple')
+    %Speak(speaker,'The image you have scanned is one hundred philippine pesos')
+end
+
+if ((OP>GP) & (OP>BP) & (OP>PP) & (OP>YP) & (OP>RP))
+    disp('orange')
+    %Speak(speaker,'The image you have scanned is twenty philippine pesos')
+end
+
+if ((BP>GP) & (BP>YP) & (BP>PP) & (BP>OP) & (BP>RP))
+    disp('blue');
+    %Speak(speaker,'The image you have scanned is one thousand philippine pesos')
+end
